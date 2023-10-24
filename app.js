@@ -1,48 +1,55 @@
-const http = require('http');
-
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
 const server = http.createServer((req, res) => {
-    res.setHeader('Content-type', 'text/html');
+    res.setHeader("Content-type", "text/html");
 
     const url = req.url;
-    if (url === '/home') {
-        res.write('<html>');
-        res.write('<head><title>Home</title></head>');
-        res.write('<body>');
-        res.write('<h1>Welcome home </h1>');
-        res.write('</body>');
-        res.write('</html>');
-        return res.end();
-    }
-    else if (url === '/about') {
-        res.write('<html>');
-        res.write('<head><title>About</title></head>');
-        res.write('<body>');
-        res.write('<h1>Welcome to About Us page</h1>');
-        res.write('</body>');
-        res.write('</html>');
-        return res.end();
-    }
-    else if (url === '/node') {
-        res.write('<html>');
-        res.write('<head><title>Node</title></head>');
-        res.write('<body>');
-        res.write('<h1>Welcome to my Node Js project</h1>');
-        res.write('</body>');
-        res.write('</html>');
-        return res.end();
-    }
+    const method = req.method;
 
-  
-    
-    res.write('<html>');
-    res.write('<head><title>My First Page</title></head>');
-    res.write('<body>');
-    res.write('<h1>Hello World!</h1>');
-    res.write('</body>');
-    res.write('</html>');
-    res.end();
+    if (url === "/") {
+        const filePath = path.join(__dirname, 'message.txt');
 
+        fs.readFile(filePath, { encoding: "utf-8" }, (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.write("<html>");
+                res.write("<head><title>Enter Message</title></head>");
+                res.write("<body>" + data + "</body>");
+                res.write('<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>');
+                res.write("</html>");
+                return res.end();
+            }
+        });
+    } else if (url === "/message" && method === "POST") {
+        const body = [];
+        req.on("data", (chunk) => {
+            body.push(chunk);
+        });
+        req.on("end", () => {
+            const parsedBody = Buffer.concat(body).toString();
+            const message = parsedBody.split("=")[1];
+            fs.writeFile("message.txt", message, (err) => {
+                if (!err) {
+                    res.statusCode = 302;
+                    res.setHeader("Location", "/");
+                    return res.end();
+                } else {
+                    console.log(err);
+                }
+            });
+        });
+    } else {
+        res.write("<html>");
+        res.write("<head><title>My First Page</title></head>");
+        res.write("<body>");
+        res.write("<h1>Hello World!</h1>");
+        res.write("</body>");
+        res.write("</html>");
+        res.end();
+    }
 });
 
 server.listen(3000);
