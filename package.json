@@ -1,0 +1,24 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "start-server": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhomik27/NodeJS-practice.git"
+  },
+  "author": "bhomik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bhomik27/NodeJS-practice/issues"
+  },
+  "homepage": "https://github.com/bhomik27/NodeJS-practice#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
